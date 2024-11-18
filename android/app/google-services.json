@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "236389801595",
+    "project_id": "movies-gdl",
+    "storage_bucket": "movies-gdl.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236389801595:android:8c8a2b727c8e7c5c56ccde",
+        "android_client_info": {
+          "package_name": "com.example.moviesgdl"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS1ASxu1fnxc_EFqNxPvIDNFQDTf2csCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
