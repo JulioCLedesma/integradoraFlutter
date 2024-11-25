@@ -30,9 +30,9 @@ class LoginFormState extends State<LoginForm> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa tu correo electrónico';
                 }
-                return null; // Return null if the input is valid
+                return null; 
               },
-              keyboardType: TextInputType.emailAddress, // Set keyboard type
+              keyboardType: TextInputType.emailAddress, 
             ),
             TextFormField(
               controller: _passwordController,
@@ -42,10 +42,10 @@ class LoginFormState extends State<LoginForm> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa tu contraseña';
                 }
-                return null; // Return null if the input is valid
+                return null; 
               },
             ),
-            const SizedBox(height: 20), // Add some spacing
+            const SizedBox(height: 20), 
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
@@ -54,13 +54,13 @@ class LoginFormState extends State<LoginForm> {
                       _emailController.text,
                       _passwordController.text,
                     );
-                    // Navigate to the catalog screen after successful login
+                    
                     if (!mounted) return;
                     
                     // ignore: use_build_context_synchronously
                     Navigator.pushReplacementNamed(context, '/catalog');
                   } catch (e) {
-                    // Show an error message if login fails.
+                    
                     if (!mounted) return;
 
                     // ignore: use_build_context_synchronously

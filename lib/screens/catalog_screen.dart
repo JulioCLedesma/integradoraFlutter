@@ -73,7 +73,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       final movie = movies[index];
                       return GestureDetector(
                         onTap: () {
-                          // Navegar a la pantalla de detalles de la película
                           Navigator.push(
                             context,
                             MaterialPageRoute(
