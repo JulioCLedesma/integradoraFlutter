@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../services/firebase_service.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -31,6 +30,7 @@ class RegisterFormState extends State<RegisterForm> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa tu correo electrónico';
                 }
+                // Puedes agregar más validaciones de correo electrónico aquí si lo deseas
                 return null;
               },
               keyboardType: TextInputType.emailAddress,
@@ -43,10 +43,10 @@ class RegisterFormState extends State<RegisterForm> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingresa tu contraseña';
                 }
+                // Puedes agregar más validaciones de contraseña aquí, como longitud mínima, etc.
                 return null;
               },
             ),
-
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -56,18 +56,19 @@ class RegisterFormState extends State<RegisterForm> {
                       _emailController.text,
                       _passwordController.text,
                     );
-                    if (!mounted) return;
+                    if (!mounted) return; // <- Importante!
                     // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Usuario creado con éxito"),
-                      ),
+                      const SnackBar(content: Text("Registro exitoso")),
                     );
 
+                    // Navega de regreso a la pantalla de inicio de sesión
                     // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
+                    Navigator.pop(context);  // Regresa a LoginScreen
+
+
                   } catch (e) {
-                    if (!mounted) return;
+                    if (!mounted) return; // <- Importante!
                     // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error al registrar usuario: $e')),
@@ -83,13 +84,10 @@ class RegisterFormState extends State<RegisterForm> {
     );
   }
 
-
-@override
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
-
 }

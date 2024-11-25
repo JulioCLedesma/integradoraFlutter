@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'services/firebase_service.dart';
 import 'screens/home_screen.dart';
+import 'screens/catalog_screen.dart';
+import 'screens/admin_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +20,18 @@ void main() async {
       projectId: "movies-gdl",
     ),
   );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => FirebaseService()),
+        StreamProvider<User?>(
+          create: (context) => FirebaseAuth.instance.authStateChanges(),
+          initialData: null,
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +44,28 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      home: const AuthWrapper(),
+      routes: {
+        '/catalog': (context) => const CatalogScreen(),
+        '/admin': (context) => const AdminScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+      },
     );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<User?>(context);
+    if (user == null) {
+      return HomeScreen();
+    } else {
+      return const CatalogScreen();
+    }
   }
 }

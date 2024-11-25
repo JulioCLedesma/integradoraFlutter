@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:moviesgdl/models/movie.dart';
+import 'package:flutter/foundation.dart'; //
+import '../models/movie.dart';
 
-class FirebaseService {
+
+class FirebaseService extends ChangeNotifier { // Extiende ChangeNotifier
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Authentication methods
+
   Future<UserCredential> signIn(String email, String password) async {
     try {
       return await _auth.signInWithEmailAndPassword(
@@ -14,11 +16,11 @@ class FirebaseService {
         password: password,
       );
     } catch (e) {
-      // ignore: avoid_print
-      print('Error signing in: $e');
+
       rethrow;
     }
   }
+
 
   Future<UserCredential> register(String email, String password) async {
     try {
@@ -27,33 +29,31 @@ class FirebaseService {
         password: password,
       );
     } catch (e) {
-      // ignore: avoid_print
-      print('Error registering user: $e');
       rethrow;
     }
   }
 
-  Future<void> signOut() async {
+   Future<void> signOut() async {
     await _auth.signOut();
+    notifyListeners(); // <--- Agregar aquí
   }
 
-  // Firestore methods
   Future<void> addMovie(Movie movie) async {
-    try {
-      await _firestore.collection('movies').add(movie.toMap());
-    } catch (e) {
-      // ignore: avoid_print
-      print('Error adding movie: $e');
-      rethrow;
-    }
+    await _firestore.collection('movies').add({
+      'title': movie.title,
+      'year': movie.year,
+      'director': movie.director,
+      'genre': movie.genre,
+      'synopsis': movie.synopsis,
+      'imageUrl': movie.imageUrl,
+    });
   }
 
   Future<void> updateMovie(Movie movie) async {
     try {
       await _firestore.collection('movies').doc(movie.id).update(movie.toMap());
+      notifyListeners(); 
     } catch (e) {
-      // ignore: avoid_print
-      print('Error updating movie: $e');
       rethrow;
     }
   }
@@ -61,19 +61,24 @@ class FirebaseService {
   Future<void> deleteMovie(String movieId) async {
     try {
       await _firestore.collection('movies').doc(movieId).delete();
+      notifyListeners(); // <--- Agregar aquí
     } catch (e) {
-      // ignore: avoid_print
-      print('Error deleting movie: $e');
       rethrow;
     }
   }
 
-  Stream<List<Movie>> getMoviesStream() {
+
+  //  No necesitas notifyListeners() en getMoviesStream() porque es un Stream
+  //  y ya notifica automáticamente a los listeners cuando hay nuevos datos
+  Stream<List<Movie>> getMoviesStream() { 
     return _firestore.collection('movies').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => Movie.fromSnapshot(doc)).toList();
     });
   }
 
+
+  //  No necesitas notifyListeners() para getMovie() si solo se usa para
+  // obtener una unica película y no se actualiza la lista en la UI directamente.
   Future<DocumentSnapshot> getMovie(String movieId) {
     return _firestore.collection('movies').doc(movieId).get();
   }

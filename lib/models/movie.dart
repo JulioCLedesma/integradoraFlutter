@@ -19,7 +19,7 @@ class Movie {
     required this.imageUrl,
   });
 
-  // Constructor para crear una instancia de Movie desde un DocumentSnapshot
+  // Método para convertir un DocumentSnapshot de Firestore a Movie
   factory Movie.fromSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data() as Map<String, dynamic>;
     return Movie(
@@ -33,7 +33,19 @@ class Movie {
     );
   }
 
-  // Método para convertir la instancia de Movie a un Map
+  // Método para convertir un Map de la API a Movie
+  factory Movie.fromApiMap(Map<String, dynamic> map) {
+    return Movie(
+      id: map['id'].toString(),  // El ID de la película lo obtenemos de la API
+      title: map['title'] ?? 'Sin título',
+      year: map['release_date']?.substring(0, 4) ?? 'N/A', // Tomamos solo el año
+      director: 'Desconocido',  // Puedes actualizarlo si tienes este dato de la API
+      genre: 'Desconocido',  // Similar para género
+      synopsis: map['overview'] ?? 'No disponible',
+      imageUrl: map['poster_path'] ?? '',  // Este es el path de la imagen
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'title': title,
@@ -45,7 +57,6 @@ class Movie {
     };
   }
 
-  // Método para crear una copia de Movie con campos actualizados
   Movie copyWith({
     String? title,
     String? year,

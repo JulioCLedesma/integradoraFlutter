@@ -56,6 +56,7 @@ class LoginFormState extends State<LoginForm> {
                     );
                     // Navigate to the catalog screen after successful login
                     if (!mounted) return;
+                    
                     // ignore: use_build_context_synchronously
                     Navigator.pushReplacementNamed(context, '/catalog');
                   } catch (e) {
