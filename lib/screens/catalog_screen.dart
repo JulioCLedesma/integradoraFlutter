@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviesgdl/screens/add_movie_screen.dart';
+import 'package:moviesgdl/screens/admin_screen.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import 'movie_detail_screen.dart';
-import '../models/movie.dart'; // Asegúrate de importar el modelo Movie
+import '../models/movie.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -32,9 +33,18 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      // ignore: use_build_context_synchronously
+      final firebaseService = Provider.of<FirebaseService>(context, listen: false);
+      final newMovies = data['results'].map<Movie>((movie) => Movie.fromApiMap(movie)).toList();
+      for (final movie in newMovies) {
+        try {
+          await firebaseService.addMovie(movie);
+        } catch (e) {
+        //
+        }
+      }
       setState(() {
-        // Convertimos el Map a un objeto Movie usando Movie.fromApiMap
-        movies = data['results'].map<Movie>((movie) => Movie.fromApiMap(movie)).toList();
+        movies = newMovies;
       });
     } else {
       throw Exception('Failed to load movies');
@@ -126,9 +136,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Implementación futura para Filtrar
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AdminScreen()),
+                        );
                       },
-                      child: const Text('Filtrar'),
+                      child: const Text('Listado'),
                     ),
                   ],
                 ),

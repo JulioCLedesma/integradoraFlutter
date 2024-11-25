@@ -32,7 +32,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView( // Permite scroll si el formulario es largo
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 TextFormField(
@@ -72,7 +72,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final movie = Movie(
-                        id: '', // El ID se genera en Firestore
+                        id: '',
                         title: _titleController.text,
                         year: _yearController.text,
                         director: _directorController.text,

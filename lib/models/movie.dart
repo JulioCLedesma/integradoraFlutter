@@ -19,9 +19,12 @@ class Movie {
     required this.imageUrl,
   });
 
-  // Método para convertir un DocumentSnapshot de Firestore a Movie
+
   factory Movie.fromSnapshot(DocumentSnapshot snapshot) {
-    final data = snapshot.data() as Map<String, dynamic>;
+    final data = snapshot.data() as Map<String, dynamic>?;
+      if (data == null) {
+    return Movie(id: snapshot.id, title: '', year: '', director: '', genre: '', synopsis: '', imageUrl: '');
+  }
     return Movie(
       id: snapshot.id,
       title: data['title'] ?? '',
@@ -33,16 +36,16 @@ class Movie {
     );
   }
 
-  // Método para convertir un Map de la API a Movie
+
   factory Movie.fromApiMap(Map<String, dynamic> map) {
     return Movie(
-      id: map['id'].toString(),  // El ID de la película lo obtenemos de la API
+      id: map['id'].toString(),
       title: map['title'] ?? 'Sin título',
-      year: map['release_date']?.substring(0, 4) ?? 'N/A', // Tomamos solo el año
-      director: 'Desconocido',  // Puedes actualizarlo si tienes este dato de la API
-      genre: 'Desconocido',  // Similar para género
+      year: map['release_date']?.substring(0, 4) ?? 'N/A',
+      director: 'Desconocido',
+      genre: 'Desconocido',
       synopsis: map['overview'] ?? 'No disponible',
-      imageUrl: map['poster_path'] ?? '',  // Este es el path de la imagen
+      imageUrl: map['poster_path'] ?? '',
     );
   }
 

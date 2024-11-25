@@ -4,10 +4,11 @@ import 'package:flutter/foundation.dart'; //
 import '../models/movie.dart';
 
 
-class FirebaseService extends ChangeNotifier { // Extiende ChangeNotifier
+class FirebaseService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+Stream<User?> get userStream => _auth.authStateChanges();
 
   Future<UserCredential> signIn(String email, String password) async {
     try {
@@ -35,51 +36,20 @@ class FirebaseService extends ChangeNotifier { // Extiende ChangeNotifier
 
    Future<void> signOut() async {
     await _auth.signOut();
-    notifyListeners(); // <--- Agregar aquí
+    notifyListeners();
   }
 
-  Future<void> addMovie(Movie movie) async {
-    await _firestore.collection('movies').add({
-      'title': movie.title,
-      'year': movie.year,
-      'director': movie.director,
-      'genre': movie.genre,
-      'synopsis': movie.synopsis,
-      'imageUrl': movie.imageUrl,
-    });
+    Future<void> addMovie(Movie movie) async {
+    await _firestore.collection('movies').add(movie.toMap());
   }
 
-  Future<void> updateMovie(Movie movie) async {
-    try {
-      await _firestore.collection('movies').doc(movie.id).update(movie.toMap());
-      notifyListeners(); 
-    } catch (e) {
-      rethrow;
-    }
+
+  Stream<List<Movie>> getMoviesStream() {
+    return _firestore.collection('movies').snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => Movie.fromSnapshot(doc)).toList());
   }
 
   Future<void> deleteMovie(String movieId) async {
-    try {
-      await _firestore.collection('movies').doc(movieId).delete();
-      notifyListeners(); // <--- Agregar aquí
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-
-  //  No necesitas notifyListeners() en getMoviesStream() porque es un Stream
-  //  y ya notifica automáticamente a los listeners cuando hay nuevos datos
-  Stream<List<Movie>> getMoviesStream() { 
-    return _firestore.collection('movies').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Movie.fromSnapshot(doc)).toList();
-    });
-  }
-
-
-  //  No necesitas notifyListeners() para getMovie() si solo se usa para
-  // obtener una unica película y no se actualiza la lista en la UI directamente.
-  Future<DocumentSnapshot> getMovie(String movieId) {
-    return _firestore.collection('movies').doc(movieId).get();
+    await _firestore.collection('movies').doc(movieId).delete();
   }
 }
